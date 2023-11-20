@@ -16,9 +16,9 @@ public class Event {
     private String description;
     private String location;
     @ManyToOne
-    @JoinTable (name = "event_participants",
-    joinColumns = @JoinColumn(name = "event_id"),
-    inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @JoinTable(name = "event_participants",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Calendar calendar;
     @ManyToMany
     private List<User> participants;

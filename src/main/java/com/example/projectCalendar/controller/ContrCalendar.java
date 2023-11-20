@@ -1,6 +1,7 @@
 package com.example.projectCalendar.controller;
 
 import com.example.projectCalendar.model.Calendar;
+import com.example.projectCalendar.model.User;
 import com.example.projectCalendar.service.ServCalendar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -10,23 +11,29 @@ import java.util.Optional;
 
 
 @RestController
+@RequestMapping("/calendar")
 public class ContrCalendar {
     @Autowired
     ServCalendar servCalendar;
 
-    @GetMapping("/view-all-calendar")
+    @GetMapping("/viewall")
     public List<Calendar> calendars() {
         return servCalendar.viewAllCalendar();
     }
 
-    @PostMapping("/create-new-calendar")
-    public String createNewCalendar(@RequestBody Calendar calendar) {
+    @GetMapping("/view/{id}")
+    public Optional<Calendar> viewUserByID(@PathVariable long id) {
+        return Optional.ofNullable(servCalendar.viewCalendar(id));
+    }
+
+    @PostMapping("/create/{id}")
+    public String createNewCalendar(@RequestBody Calendar calendar, @PathVariable long id) {
         servCalendar.addCalendar(calendar);
         return "new Calendar created.";
     }
 
-    @DeleteMapping("/delete-calendar-byid")
-    public String deleteCalendarById(@RequestParam long id) {
+    @DeleteMapping("/delete/{id}")
+    public String deleteCalendarById(@PathVariable long id) {
         servCalendar.deleteCalendar(id);
         return "Calendar id:" + id + "deleted";
     }
