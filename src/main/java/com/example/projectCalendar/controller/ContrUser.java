@@ -1,8 +1,11 @@
 package com.example.projectCalendar.controller;
 
+import com.example.projectCalendar.model.Calendar;
 import com.example.projectCalendar.model.User;
 import com.example.projectCalendar.service.ServUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,27 +18,55 @@ public class ContrUser {
     @Autowired
     ServUser servUser;
 
-    @GetMapping("/view")
-    public List<User> users() {
-        return servUser.viewAllUser();
+    @PostMapping
+    public ResponseEntity createNewUser(@RequestBody User user){
+        try {
+            return ResponseEntity.ok(servUser.addUser(user));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
     }
 
-    @GetMapping("/view/{id}")
-    public Optional<User> viewUserByID(@PathVariable long id) {
-        return Optional.ofNullable(servUser.viewUser(id));
+    @GetMapping
+    public ResponseEntity geAllUser() {
+        try {
+            return ResponseEntity.ok(servUser.viewAllUsers());
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
     }
 
 
-    @PostMapping("/create")
-    public String createNewUser(@RequestBody User user) {
-        servUser.addUser(user);
-        return "new user created: " + user.getUsername();
+    @GetMapping("/{id}")
+    public ResponseEntity getUserById(@PathVariable int id){
+        try {
+            return ResponseEntity.ok(servUser.viewUserByID(id));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
     }
 
-    @DeleteMapping("/delete/{id}")
-    public String deleteUserById(@PathVariable long id) {
-        servUser.deleteUser(id);
-        return "User:" + id + " deleted";
+    @PutMapping("/{id}")
+    public ResponseEntity updateUser(@PathVariable int id, @RequestBody User user) {
+        try {
+            return ResponseEntity.ok(servUser.updateUser(id, user));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteUserById(@PathVariable int id) {
+        try {
+            return ResponseEntity.ok(servUser.deleteUser(id));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
     }
 
 }

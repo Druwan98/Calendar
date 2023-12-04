@@ -1,5 +1,8 @@
 package com.example.projectCalendar.model;
 
+import com.example.projectCalendar.util.HandleType;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -9,28 +12,34 @@ import java.util.List;
 public class Event {
     @Id
     @GeneratedValue
-    private long id;
+    private int id;
     private String title;
-    private LocalDateTime dateTimeStart;
-    private LocalDateTime dateTimeEnd;
     private String description;
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
+    private LocalDateTime dateTimeStart;
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
+    private LocalDateTime dateTimeEnd;
     private String location;
+    @JsonIgnore
+    private HandleType handleType;
+    @JsonIgnore
+    private Integer recurrenceInterval;
     @ManyToOne
-    @JoinTable(name = "event_participants",
-            joinColumns = @JoinColumn(name = "event_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @JoinColumn(name = "calendar_id")
+    @JsonIgnore
     private Calendar calendar;
-    @ManyToMany
+    @ManyToMany(mappedBy = "events")
+    @JsonIgnore
     private List<User> participants;
 
     public Event() {
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -40,6 +49,14 @@ public class Event {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public LocalDateTime getDateTimeStart() {
@@ -58,20 +75,28 @@ public class Event {
         this.dateTimeEnd = dateTimeEnd;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getLocation() {
         return location;
     }
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public HandleType getHandleType() {
+        return handleType;
+    }
+
+    public void setHandleType(HandleType handleType) {
+        this.handleType = handleType;
+    }
+
+    public Integer getRecurrenceInterval() {
+        return recurrenceInterval;
+    }
+
+    public void setRecurrenceInterval(Integer recurrenceInterval) {
+        this.recurrenceInterval = recurrenceInterval;
     }
 
     public Calendar getCalendar() {
@@ -82,11 +107,11 @@ public class Event {
         this.calendar = calendar;
     }
 
-    public List<User> getPartecipants() {
+    public List<User> getParticipants() {
         return participants;
     }
 
-    public void setPartecipants(List<User> partecipants) {
-        this.participants = partecipants;
+    public void setParticipants(List<User> participants) {
+        this.participants = participants;
     }
 }

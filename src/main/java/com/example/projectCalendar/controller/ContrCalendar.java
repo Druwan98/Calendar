@@ -4,8 +4,11 @@ import com.example.projectCalendar.model.Calendar;
 import com.example.projectCalendar.model.User;
 import com.example.projectCalendar.service.ServCalendar;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,33 +19,43 @@ public class ContrCalendar {
     @Autowired
     ServCalendar servCalendar;
 
-    @GetMapping("/viewall")
-    public List<Calendar> calendars() {
-        return servCalendar.viewAllCalendar();
+
+    @PostMapping("/{userID}")
+    public ResponseEntity createNewCalendar(@PathVariable int userID, @RequestBody Calendar calendar){
+        try {
+            return ResponseEntity.ok(servCalendar.createCalendar(userID, calendar));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
     }
 
-    @GetMapping("/view/{id}")
-    public Optional<Calendar> viewUserByID(@PathVariable long id) {
-        return Optional.ofNullable(servCalendar.viewCalendar(id));
+    @GetMapping("/{userID}")
+    public ResponseEntity viewAllCalendarByUserID(@PathVariable int userID){
+        try {
+            return ResponseEntity.ok(servCalendar.viewAllCalendarByUserID(userID));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
-    @PostMapping("/create/{id}")
-    public String createNewCalendar(@RequestBody Calendar calendar, @PathVariable long id) {
-        servCalendar.addCalendar(calendar);
-        return "new Calendar created.";
+    @PutMapping("/{id}")
+    public ResponseEntity updateCalendar(@PathVariable int id, @RequestBody Calendar calendar){
+        try {
+            return ResponseEntity.ok(servCalendar.updateCalendar(id, calendar));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
-    @DeleteMapping("/delete/{id}")
-    public String deleteCalendarById(@PathVariable long id) {
-        servCalendar.deleteCalendar(id);
-        return "Calendar id:" + id + "deleted";
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteCalendar(@PathVariable int id){
+        try {
+            return ResponseEntity.ok(servCalendar.deleteCalendar(id));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
     }
-
-//    @PutMapping("update-calendar")
-//    public String updateCalendar(@RequestParam long id, @RequestBody Calendar calendar){
-//        servCalendar.updateCalendar(id, Optional.ofNullable(calendar.getUser()), Optional.ofNullable(calendar.getEvent()));
-//        return "Calendar updated.";
-//    }
-
 
 }

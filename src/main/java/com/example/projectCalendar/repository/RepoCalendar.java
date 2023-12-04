@@ -13,8 +13,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface RepoCalendar extends JpaRepository<Calendar, Long> {
-//    @Modifying
-//    @Query("UPDATE calendar c SET c.user = :user, c.event = :event")
-//    void updateCalendar(@Param("id") long id, @Param("username") User user, @Param("event") List<Event> event);
+public interface RepoCalendar extends JpaRepository<Calendar, Integer> {
+    @Modifying
+    @Query("UPDATE Calendar c SET c.name = :name, " +
+            "c.description = :description, " +
+            "c.user = :user " +
+            "WHERE c.id = :id")
+    void updateCalendar(@Param("id") int id,
+                        @Param("name") String name,
+                        @Param("description") String description,
+                        @Param("user")User user);
 }

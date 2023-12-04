@@ -1,29 +1,36 @@
 package com.example.projectCalendar.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 public class User {
     @Id
     @GeneratedValue
-    private long id;
+    private int id;
     private String username;
     private String password;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Calendar> calendars;
-    @ManyToMany(mappedBy = "participants")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Calendar> calendars = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(name = "user_event",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id"))
+    @JsonIgnore
     private List<Event> events;
 
     public User() {
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -43,12 +50,12 @@ public class User {
         this.password = password;
     }
 
-    public List<Calendar> getCalendar() {
+    public List<Calendar> getCalendars() {
         return calendars;
     }
 
-    public void setCalendar(List<Calendar> calendar) {
-        this.calendars = calendar;
+    public void setCalendars(List<Calendar> calendars) {
+        this.calendars = calendars;
     }
 
     public List<Event> getEvents() {
